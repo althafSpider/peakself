@@ -1,6 +1,10 @@
 {
   "name": "peakself",
   "private": true,
+    "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
   "scripts": {
     "build": "turbo run build",
     "dev": "turbo run dev",
@@ -17,4 +21,5 @@
   "engines": {
     "node": ">=18"
   }
+
 }
