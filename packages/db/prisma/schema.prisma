@@ -6,13 +6,58 @@
 generator client {
   provider = "prisma-client"
   output   = "../generated/prisma"
+
 }
 
 datasource db {
   provider = "postgresql"
 }
 model User {
-  id    String @id @default(cuid())
-  email String @unique
-  name  String?
+  id            String   @id @default(cuid())
+  email         String   @unique
+  name          String?
+  image         String?
+
+  googleId      String?  @unique  @map("google_id")
+
+  createdAt     DateTime @default(now()) @map("created_at")
+  updatedAt     DateTime @updatedAt @map("updated_at")
+
+  magicLinks    MagicLink[] 
+  @@map("users")
+  sessions Session[]
+}
+
+model MagicLink {
+  id         String   @id @default(cuid())
+
+  tokenHash  String   @map("token_hash")
+  expiresAt  DateTime @map("expires_at")
+
+  used       Boolean  @default(false)   @map("used")
+
+  userId     String   @map("user_id")
+  user       User @relation(fields: [userId], references: [id])
+
+  createdAt  DateTime @default(now()) @map("created_at")
+
+  @@map("magic_links")
+}
+
+model Session {
+  id                 String   @id @default(cuid())
+
+  userId             String
+  user               User @relation(fields: [userId], references: [id])
+
+  refreshTokenHash   String
+
+  userAgent          String?
+  ipAddress          String?
+
+  expiresAt          DateTime
+
+  revoked            Boolean  @default(false)
+
+  createdAt          DateTime @default(now())
 }
